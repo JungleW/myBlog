@@ -1,0 +1,37 @@
+ <div class="row">
+        <!-- /.col -->
+        <div class="col-md-12">
+          <div class="box box-primary">
+            <div class="box-header with-border">
+              <h2 class="box-title"><%= blog.title %></h2>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body no-padding">
+              <div class="mailbox-read-info">
+                <h3>Message Subject Is Placed Here</h3>
+                <h5>From: help@example.com
+                  <span class="mailbox-read-time pull-right">15 Feb. 2016 11:03 PM</span></h5>
+              </div>
+              <!-- /.mailbox-read-info -->
+              <div class="mailbox-read-message">
+                <p><%= blog.author %></p>
+                <div><%= blog.content %></div>
+              </div>
+              <!-- /.mailbox-read-message -->
+            </div>
+            <!-- /.box-body -->
+        
+            <div class="box-footer">
+              <div class="pull-right">
+                <button type="submit" class="btn btn-default"><i class="fa fa-trash-o"></i>删除</button>
+            </div>
+               <button type="button" class="btn btn-primary"><i class="fa fa-share-square-o"></i>发表</button>
+              <button type="button" class="btn btn-primary"><i class="fa fa-lock"></i>私有</button>
+            </div>
+            <!-- /.box-footer -->
+          </div>
+          <!-- /. box -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->

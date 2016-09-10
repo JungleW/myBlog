@@ -1,0 +1,26 @@
+<% include _head.html %>
+    <div id="container" class="container">
+    <% blogs.forEach(function(blog) { %>
+        <div class="row">
+            <div class="col-md-12 column">
+                <div class="page-header">
+                    <h1><%= blog.title %>
+                    <small>更新于<%= blog.updateTime %></small>
+                    </h1>
+                </div>
+                <p>
+                     <span class="label label-default"><%= blog.tag %></span>
+                </p>
+                <p><%= blog.abstract %></p>
+                <p><%= blog.content %></p>
+                <p>
+                    <a class="btn" href="#" >more »</a>
+                </p>
+            </div>
+        </div>
+        <% }); %>
+    </div>
+    <% include _footer.html %>
+        <script src="/lib/jquery-validation-1.14.0/jquery.validate.min.js"></script>
+        <script src="/js/blog.js"></script>
+        <% include _bottom.html %>
