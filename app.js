@@ -18,9 +18,10 @@ var blog = require('./routes/blog');
 
 // manager
 
-var m_index = require('./routes/admin/index');
-var m_user = require('./routes/admin/user');
-var m_blog = require('./routes/admin/blog');
+var a_index = require('./routes/admin/index');
+var a_user = require('./routes/admin/user');
+var a_blog = require('./routes/admin/blog');
+var a_profile = require('./routes/admin/profile');
 
 var app = express();
 
@@ -55,10 +56,11 @@ app.use('/home', index);
 app.use('/user', user);
 app.use('/blog', blog);
 
-app.use('/admin', m_index);
-app.use('/admin/index', m_index);
-app.use('/admin/user', m_user);
-app.use('/admin/blog', m_blog);
+app.use('/admin', a_index);
+app.use('/admin/index', a_index);
+app.use('/admin/user', a_user);
+app.use('/admin/blog', a_blog);
+app.use('/admin/profile', a_profile);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -9,9 +9,10 @@ if (typeof jQuery === "undefined") {
         lTop: "50px",
         lBottom: '0px',
         lWidth: "200px",
-        lBackgruondColor: "#367aa1",
         lShow: false,
-        lLayer: false,
+        lLayer: true,
+        lLayerClick: true,
+        lCloseBtn: true,
         lRelayEle: undefined
     };
     function RightLayer($ele, opts){
@@ -29,18 +30,22 @@ if (typeof jQuery === "undefined") {
             this.$ele.css("bottom", this.options.lBottom);
             this.$ele.css("width", this.options.lWidth);
             this.$ele.css("right", "-" + this.options.lWidth);
-            this.$ele.css("background-color",this.options.lBackgruondColor);
-            var btn = $('<div style="position:absolute; top:0; left:0;  width:100%; height:35px; z-index: 1051;"><i class="fa fa-remove" style="position:absolute; top:0; left:0; padding: 0 10px; color:#fff; display: block; width: 35px; height: 100%; line-height: 35px; text-align: center;cursor: pointer;"></i><h3 style="padding:5px; text-align: center; margin:0; color:#fff;" id="header"></h1></div>');
-            this.$ele.append(btn);
-            btn.bind('click', function() {
-                This.hide();
-            });
-            if(this.options.lLayer){
-                This.layer = $('<div style="position:fixed; z-index: 1050; left:0; right:0; top:0; bottom:0; background-color: rgba(34, 45, 50, 0.2); display: none"></div>');
-                this.$ele.after(This.layer);
-                This.layer.bind('click', function() {
+
+            if(this.options.lCloseBtn){
+                var btn = $('<div class="title" style="position:absolute; top:0; left:0;  width:100%; height:35px;"><i class="fa fa-remove" style="position:absolute; top:0; left:0; padding: 0 10px; color:#fff; display: block; width: 35px; height: 100%; line-height: 35px; text-align: center;cursor: pointer;"></i></div>');
+                this.$ele.append(btn);
+                btn.bind('click', function() {
                     This.hide();
                 });
+            }
+            if(this.options.lLayer){
+                This.layer = this.$ele.find(".layer");
+                This.layer.addClass("top-layer");
+                if(this.options.lLayerClick){
+                    This.layer.bind('click', function() {
+                        This.hide();
+                    });
+                }
             }
             
             if(this.options.lShow){

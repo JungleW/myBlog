@@ -3,7 +3,9 @@ var mongoose = require("mongoose");
     
 var UserSchema = new mongoose.Schema({
       name: String,
-      password: String
+      password: String,
+      role: Number,
+      image: String
 });
 var UserModel = mongoose.model('user', UserSchema);
 
@@ -16,17 +18,28 @@ User.prototype.save = function(obj, callback) {
         callback(err);
     });
 };
-
+/* 更新 */
+User.prototype.update = function(search, obj, callback) {
+    UserModel.update(search, {$set: obj}, function(err){
+        callback(err);
+    });
+};
+/* 删除 */
+User.prototype.delete = function(options, callback) {
+    UserModel.remove(options, function(err){
+        callback(err);
+    });
+};
 /* 搜索 */
-User.prototype.search = function(obj, callback) {
-    UserModel.find(obj, function(err, obj){
+User.prototype.search = function(options, callback) {
+    UserModel.find(options, function(err, obj){
         callback(err, obj);
     });
 };
 
-/* 按名字进行查找 */
-User.prototype.findByName = function(name, callback) {
-    UserModel.findOne({name: name}, function(err, obj) {
+/* 搜索一个 */
+User.prototype.searchOne = function(options, callback) {
+    UserModel.findOne(options, function(err, obj) {
         callback(err, obj);
     });
 };

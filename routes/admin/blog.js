@@ -4,37 +4,47 @@ var Blog = require("../../models/blog");
 var router = express.Router();
 
 /* GET blog page. */
-router.get('/', function(req, res, next) {
+router.get('/ajax', function(req, res, next) {
     //搜索博文
     Blog.search({}, function(err, data) {
-        res.render('admin/blog', {
-            title: 'Blog',
-            index: 'blog',
-            blogs: data,
-            user: req.session.user
+        res.render('admin/_blog', {
+            title:"博文",
+            table:{
+                id: "table",
+                titles: [
+                    {name: '标题', label: 'title', url: ''}, 
+                    {name: '作者', label: 'author'}, 
+                    {name: '阅读量', label: 'view'}, 
+                    {name: '点赞', label: 'like'},  
+                    {name: '操作', opers: 
+                        [  
+                            {name: '详情',  oper: 'show'}, 
+                            {name: '编辑',  oper: 'edit'}, 
+                            {name: '删除',  oper: 'del'}
+                        ]
+                    }
+                ],
+                noSortArr: [4],
+                list: data
+            }
         });
     });
 });
-/* GET blog page. */
-router.get('/ajax/list', function(req, res, next) {
-    //搜索博文
-    Blog.search({}, function(err, data) {
-        res.send({
-            titles: [
-                {name: '标题', label: 'title', url: ''}, 
-                {name: '作者', label: 'author'}, 
-                {name: '阅读量', label: 'view'}, 
-                {name: '点赞', label: 'like'},  
-                {name: '详情', label: '', oper: 'show'}, 
-                {name: '编辑', label: '', oper: 'edit'}
-            ],
-            noSortArr: [4,5],
-            list: data
-        });
+/* GET table status page. */
+router.get('/ajax/tableOptions', function(req, res, next) {
+    //表格修饰
+    res.send({
+        title:"博文",
+        table:{
+            id: "table",
+            noSortArr: [4]
+        },
+        done: true
     });
 });
+
 /* GET blog list page. */
-router.get('/ajax/rows', function(req, res, next) {
+router.get('/ajax/list', function(req, res, next) {
     //搜索博文
     Blog.search({}, function(err, data) {
         res.send({
@@ -46,34 +56,55 @@ router.get('/ajax/rows', function(req, res, next) {
 
 //添加博文
 router.get('/ajax/edit', function(req, res, next) {
-    res.render('admin/blog_edit_ajax', {
+    res.render('admin/_blog_edit', {
         title: 'Blog_edit',
-        index: 'blog_edit'
+        index: 'blog_edit',
+        blog: ""
     });
 });
 //修改博文
 router.get('/ajax/edit/:id', function(req, res, next) {
     var id = req.params.id;
-    Blog.findById(id, function(err, data) {
-        res.render('admin/blog_edit_ajax', {
+    Blog.searchOne({"_id": id}, function(err, data) {
+        res.render('admin/_blog_edit', {
             title: 'Blog_edit',
-            index: 'blog_edit'
+            index: 'blog_edit',
+            blog: data
         });
     });
 });
 
 router.get('/ajax/show/:id', function(req, res, next) {
     var id = req.params.id;
-    Blog.findById(id, function(err, data) {
-        res.render('admin/blog_show_ajax', {
+    Blog.searchOne({"_id": id}, function(err, data) {
+        res.render('admin/_blog_show', {
             title: 'blog_show',
             index: 'blog_show',
             blog: data
         });
     });
 });
+router.post('/ajax/del/:id', function(req, res, next) {
+    var id = req.params.id;
+    Blog.delete({_id: id}, function(err) {
+        if(err){        
+            res.send({
+                done: false,
+                msg: "删除失败"
+            });
+            return;
+        } else {
+            res.send({
+                done: true,
+                msg: "删除成功"
+            });
+            return;
+        }
 
-router.post('/update', function(req, res, next) {
+    });
+});
+router.post('/ajax/update', function(req, res, next) {
+    var id = req.body.id;
     //检验博文输入
     if(req.body.title == undefined || req.body.title == ''){
         res.send({
@@ -99,17 +130,60 @@ router.post('/update', function(req, res, next) {
     var newBlog = {
         title: req.body.title,
         author: "test",
-        content: req.body.content
+        updateTime: "2016-08-09",
+        abstract: "摘要",
+        content: req.body.content,
+        view: 0,
+        like: 0,
+        talk: 0
     };
     
     //检查用户名是否已存在
-    Blog.save(newBlog, function(err, blog) {
-        res.send({
-            done: true,
-            url: '/',
-            user: req.session.user
+    if(id){    
+        Blog.searchOne({"_id":id}, function(err, blog) {
+            if(err){
+                 res.send({
+                    done: false,
+                    msg: "数据库访问异常"
+                 });
+                return;
+            }
+            Blog.update({"_id": blog._id}, newBlog, function(err, blog) {
+                if(err){   
+                     console.log("update f");
+                     res.send({
+                        done: false,
+                        msg: "数据库访问异常"
+                     });
+                    return;
+                }
+                console.log("updata s");
+                res.send({
+                    done: true,
+                    msg:"更新成功"
+                });
+                return;
+            });
+
         });
-    });
+    } else {
+        Blog.save(newBlog, function(err, blog) {
+            if(err){
+                console.log("save f");
+                 res.send({
+                    done: false,
+                    msg: "数据库访问异常"
+                 });
+                return;
+            }
+            console.log("save s");
+            res.send({
+                done: true,
+                msg:"添加成功"
+            });
+            return;
+        });
+    } 
 });
 
 module.exports = router;

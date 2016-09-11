@@ -1,87 +1,73 @@
 var rightLayer;
+var lockLayer;
 var role;
 $(function () {
-    $(".main-item").bind("click", function() {
+    $(".main-block").bind("click", function() {
+        $("#m_title").html($(this).find(".title").html());
         role = $(this).attr("data-role");
         $.ajax({
-            url: "/admin/" + role + "/ajax/list",
+            url: "/admin/" + role + "/ajax",
             type: "get",
             data: {},
-            dataType:"json",
+            dataType:"text",
             success: function(data) {
-                updateTable(data);
+                showBlock(data);
+            },
+            error: function(err, data){
+                showPage500();
             }
         });
     });
+    //右导航栏的样式改变
+    $(".main-link").bind("click", function() {
+        $("li.active").removeClass("active");
+        $(this).addClass("active");
+        var parentLis = $(this).parents("li");
+        parentLis.each(function() {
+            $(this).addClass("active");
+        });
+    });
     //左弹窗
-    rightLayer = $("#right_layer").RightLayer({
+    rightLayer = $("#right_sidebar").RightLayer({
         lWidth:"768px", 
         lShow: false, 
-        lLayer: true, 
+        lLayerClick: true, 
+        lLayer: false,
         lRelayEle: $("#main_container")
+    });
+    //锁屏弹窗
+    lockLayer = $("#lock_sidebar").RightLayer({
+        lWidth:"400px", 
+        lShow: false, 
+        lLayerClick: false, 
+        lLayer: true,
+        lCloseBtn: false,
+        lRelayEle: $("#main_container"),
+        callback: function() {
+            $(this).hide();
+        }
     });
 });
 
-function show(id) {
-    $("#right_layer #header").html("详情");
-    $.ajax({
-        url: "/admin/" + role + "/ajax/show/" + id,
-        type: "get",
-        data: {},
-        dataType:"text",
-        success: function(data) {
-            $("#right_content").html(data);
-        }
-    });
-    rightLayer.show();
-};
-function edit(id) {
-    $("#right_layer #header").html("编辑");   
-    $.ajax({
-        url: "/admin/" + role + "/ajax/edit", ///" + id,
-        type: "get",
-        data: {},
-        dataType:"text",
-        success: function(data) {
-            $("#right_content").html(data);    
-            <!-- Page Script -->
-            //Add text editor
-            $("#compose-textarea").wysihtml5();
-        }
-    });
 
-    rightLayer.show();
-};
-//更新列表数据
-function updateTable(data) {
-    var table = '<div class="row"><div class="col-sm-12"><table id="example1" class="table table-bordered table-striped"><thead><tr>';
-    var colNum = 0;
-    if(data && data.titles){
-        colNum = data.titles.length;
-        for(var i=0; i<colNum; i++){
-            table += '<th>'+ data.titles[i].name+'</th>';
-        };
-    }
-    table+='</tr></thead><tbody>';
-    if(data && data.list){
-        var listNum = data.list.length;
-        for(var i=0; i<listNum; i++){
-            table += '<tr>';
-            table += '<td><a href="javascript:show(\'' + data.list[i]._id + '\')" >' + data.list[i][data.titles[0].label] +'</a></td>';
-            for(var j=1; j<colNum; j++){
-                if(data.titles[j].oper){
-                    table += '<td><a href="javascript:'+ data.titles[j].oper +'(\'' + data.list[i]._id + '\')" >' + data.titles[j].name +'</a></td>';
-                } else {
-                    table += '<td>' + data.list[i][data.titles[j].label] +'</td>';
-                }
+function showBlock(data) {
+    $("#m_content").html(data);
+    $.ajax({
+        url: "/admin/" + role + "/ajax/tableOptions",
+        type: "get",
+        data: {},
+        dataType:"json",
+        success: function(data) {
+            if(data.done){
+                updateTable(data.table);
             }
-            table += '</tr>';
         }
-    }else{ table += '<tr><td></td></tr>';}
-    table += '</tbody></table></div></div>';
-    $("#m_table").html(table);
+    });
+}
+//更新列表数据
+function updateTable(table) {      
     //列表
-    var dataTable = $("#example1").DataTable({
+    $("#"+table.id).DataTable({
       //"sDom":'<"row"<"col-md-6"i><"col-md-6"s>><"row"<"col-sm-12"rt>><"row"<"col-md-6"l><"col-md-6"p>><"clear">',
       "paging": true,
       "lengthChange": true,
@@ -91,7 +77,7 @@ function updateTable(data) {
       "autoWidth": false,
       "columnDefs":[{
          orderable:false,//禁用排序
-         targets:data.noSortArr   //指定的列
+         targets:table.noSortArr   //指定的列
       }],
       "serverSide": false,
       /*"ajax": {
@@ -115,6 +101,106 @@ function updateTable(data) {
         "sZeroRecords": "没有检索到数据",
         "sProcessing": "<img src='./loading.gif' />",
         "sSearch": "搜索:",
+        }
+    });
+}
+function show(id) {
+    $.ajax({
+        url: "/admin/" + role + "/ajax/show/" + id,
+        type: "get",
+        data: {},
+        dataType:"text",
+        success: function(data) {
+            $("#right_sidebar .content").html(data);
+            rightLayer.show();
+        }
+    });
+};
+function edit(id) { 
+    $.ajax({
+        url: "/admin/" + role + "/ajax/edit/" + id,
+        type: "get",
+        data: {},
+        dataType:"text",
+        success: function(data) {
+            $("#right_sidebar .content").html(data);    
+            <!-- Page Script -->
+            //Add text editor
+            $(".textarea").each(function() {
+                $(this).wysihtml5();
+            });
+            rightLayer.show();
+        }
+    });
+};
+function update() {
+    $.ajax({
+        url: "/admin/" + role + "/ajax/update",
+        type: "post",
+        data: $("#submitForm").serialize(),
+        dataType:"json",
+        success: function(data) {
+            if(data.done){
+                $("li.active a").click();
+                rightLayer.hide();
+            }else{
+                alert(data.msg);
+            }
+        }
+    });
+};
+function del(id) {
+    $.ajax({
+        url: "/admin/" + role + "/ajax/del/" + id,
+        type: "post",
+        data: {},
+        dataType:"json",
+        success: function(data) {
+            if(data.done){
+                $("li.active a").click();
+            }else{
+                alert(data.msg);
+            }
+        }
+    });
+};
+
+function resetPwd1(){   
+    $.ajax({
+        url: "/admin/" + role + "/ajax/resetPwd",
+        type: "post",
+        data: {},
+        dataType:"text",
+        success: function(data) {
+            $("#lock_sidebar .content").html(data);    
+            rightLayer.show();
+        }
+    });
+}
+function resetPwd(){   
+    $.ajax({
+        url: "/admin/ajax/lock",
+        type: "get",
+        data: {},
+        dataType:"text",
+        success: function(data) {
+            $("#lock_sidebar .content").html(data);    
+            lockLayer.show();
+        }
+    });
+}
+function unlock(){   
+    $.ajax({
+        url: "/user/login",
+        type: "post",
+        data: $("#lockForm").serialize(),
+        dataType:"json",
+        success: function(data) {
+            if(data.done){
+                lockLayer.hide();
+            }else{
+                alert(data.msg);
+            }
         }
     });
 }
