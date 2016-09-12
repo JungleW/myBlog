@@ -13,12 +13,16 @@ if (typeof jQuery === "undefined") {
         lLayer: true,
         lLayerClick: true,
         lCloseBtn: true,
-        lRelayEle: undefined
+        lRelayEle: undefined,
+        lCallback: undefined
     };
-    function RightLayer($ele, opts){
+    function RightLayer($ele, opts, callback){
         this.$ele = $ele;
         this.options = opts = $.extend(defaults, opts || {});
-        this.init();
+        this.init();            
+        if(callback){
+            callback();
+        }
     };
     RightLayer.prototype = {
         init: function() {
@@ -47,7 +51,6 @@ if (typeof jQuery === "undefined") {
                     });
                 }
             }
-            
             if(this.options.lShow){
                 This.show();
             };
@@ -68,10 +71,13 @@ if (typeof jQuery === "undefined") {
             if(this.layer){
                 this.layer.css("display", "none");
             }
+        },
+        callback: function(){
+            this.options.callback();
         }
     }
-    $.fn.RightLayer = function(opts) {
+    $.fn.RightLayer = function(opts, callback) {
         var options = $.extend(defaults, opts || {});
-        return new RightLayer($(this), options);
+        return new RightLayer($(this), options, callback);
     }
 })(jQuery, window, document);

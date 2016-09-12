@@ -22,10 +22,6 @@ router.get('/login', function(req, res, next) {
 });
 
 router.post('/login', function(req, res, next) {       
-    res.send({
-        done: true
-    });
-    return;
     //检验用户输入
     if(req.body.username == undefined || req.body.username == ''){
         res.send({

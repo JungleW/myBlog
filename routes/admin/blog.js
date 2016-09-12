@@ -1,14 +1,20 @@
 var express = require('express');
 var crypto = require('crypto');
 var Blog = require("../../models/blog");
+var path = require('path');
+var ejs = require('ejs');
 var router = express.Router();
+
+var app = express();
+// view engine setup
+app.engine('.html', ejs.__express);
+app.set('view engine', 'html');
 
 /* GET blog page. */
 router.get('/ajax', function(req, res, next) {
     //搜索博文
     Blog.search({}, function(err, data) {
-        res.render('admin/_blog', {
-            title:"博文",
+        app.render('admin/_blog', {
             table:{
                 id: "table",
                 titles: [
@@ -24,9 +30,18 @@ router.get('/ajax', function(req, res, next) {
                         ]
                     }
                 ],
-                noSortArr: [4],
                 list: data
             }
+        }, function(err, html){
+            res.send({
+                title:"博文",
+                html: html,
+                table:{
+                    id: "table",
+                    noSortArr: [4]
+                },
+                done: true
+            });
         });
     });
 });

@@ -9,12 +9,19 @@ $(function () {
             url: "/admin/" + role + "/ajax",
             type: "get",
             data: {},
-            dataType:"text",
+            dataType:"json",
             success: function(data) {
-                showBlock(data);
+                if(data.done){
+                    showBlock(data.html);
+                    if(data.table){
+                        updateTable(data.table);
+                    }
+                }else{
+
+                }
             },
             error: function(err, data){
-                showPage500();
+                alert("访问异常");
             }
         });
     });
@@ -32,7 +39,7 @@ $(function () {
         lWidth:"768px", 
         lShow: false, 
         lLayerClick: true, 
-        lLayer: false,
+        lLayer: true,
         lRelayEle: $("#main_container")
     });
     //锁屏弹窗
@@ -44,25 +51,24 @@ $(function () {
         lCloseBtn: false,
         lRelayEle: $("#main_container"),
         callback: function() {
-            $(this).hide();
+            lockLayer.hide();
         }
+    }, function(){
+           $.ajax({
+                url: "/admin/ajax/lock",
+                type: "get",
+                data: {},
+                dataType:"text",
+                success: function(data) {
+                    $("#lock_sidebar .content").html(data);
+                }
+            });
     });
 });
 
 
 function showBlock(data) {
     $("#m_content").html(data);
-    $.ajax({
-        url: "/admin/" + role + "/ajax/tableOptions",
-        type: "get",
-        data: {},
-        dataType:"json",
-        success: function(data) {
-            if(data.done){
-                updateTable(data.table);
-            }
-        }
-    });
 }
 //更新列表数据
 function updateTable(table) {      
@@ -104,9 +110,19 @@ function updateTable(table) {
         }
     });
 }
-function show(id) {
+function show(id, myRole) {
+    var url;
+    if(id && myRole){
+        url = "/admin/" + myRole + "/ajax/show/" + id;
+    }else if(id){
+        url = "/admin/" + role + "/ajax/show/" + id;
+    }else if(myRole){
+        url = "/admin/" + myRole + "/ajax/show";
+    }else{
+        url = "/admin/" + role + "/ajax/show";
+    }
     $.ajax({
-        url: "/admin/" + role + "/ajax/show/" + id,
+        url: url,
         type: "get",
         data: {},
         dataType:"text",
@@ -116,14 +132,25 @@ function show(id) {
         }
     });
 };
-function edit(id) { 
+function edit(id, myRole) {
+    var url;
+    if(id && myRole){
+        url = "/admin/" + myRole + "/ajax/edit/" + id;
+    }else if(id){
+        url = "/admin/" + role + "/ajax/edit/" + id;
+    }else if(myRole){
+        url = "/admin/" + myRole + "/ajax/edit";
+    }else{
+        url = "/admin/" + role + "/ajax/edit";
+    } 
     $.ajax({
-        url: "/admin/" + role + "/ajax/edit/" + id,
+        url: url,
         type: "get",
         data: {},
         dataType:"text",
         success: function(data) {
-            $("#right_sidebar .content").html(data);    
+            $("#right_sidebar .content").html(data);
+            $("#rightSidebarForm").validate();   
             <!-- Page Script -->
             //Add text editor
             $(".textarea").each(function() {
@@ -133,11 +160,21 @@ function edit(id) {
         }
     });
 };
-function update() {
+function update(id, myRole){
+    var url;
+    if(id && myRole){
+        url = "/admin/" + myRole + "/ajax/update/" + id;
+    }else if(id){
+        url = "/admin/" + role + "/ajax/update/" + id;
+    }else if(myRole){
+        url = "/admin/" + myRole + "/ajax/update";
+    }else{
+        url = "/admin/" + role + "/ajax/update";
+    } 
     $.ajax({
-        url: "/admin/" + role + "/ajax/update",
+        url: url,
         type: "post",
-        data: $("#submitForm").serialize(),
+        data: $("#rightSidebarForm").serialize(),
         dataType:"json",
         success: function(data) {
             if(data.done){
@@ -149,9 +186,19 @@ function update() {
         }
     });
 };
-function del(id) {
+function del(id, myRole){
+    var url;
+    if(id && myRole){
+        url = "/admin/" + myRole + "/ajax/del/" + id;
+    }else if(id){
+        url = "/admin/" + role + "/ajax/del/" + id;
+    }else if(myRole){
+        url = "/admin/" + myRole + "/ajax/del";
+    }else{
+        url = "/admin/" + role + "/ajax/del";
+    } 
     $.ajax({
-        url: "/admin/" + role + "/ajax/del/" + id,
+        url: url,
         type: "post",
         data: {},
         dataType:"json",
@@ -165,41 +212,59 @@ function del(id) {
     });
 };
 
-function resetPwd1(){   
+//自定义展示方法
+function DGet(myRole, myOper, dataType){
+    if(!dataType){
+        dataType = "text";
+    }
     $.ajax({
-        url: "/admin/" + role + "/ajax/resetPwd",
-        type: "post",
+        url: "/admin/" + myRole + "/ajax/" + myOper,
+        type: "get",
         data: {},
-        dataType:"text",
+        dataType: dataType,
         success: function(data) {
-            $("#lock_sidebar .content").html(data);    
+            $("#right_sidebar .content").html(data);
+            $("#rightSidebarForm").validate();   
+            <!-- Page Script -->
+            //Add text editor
+            $(".textarea").each(function() {
+                $(this).wysihtml5();
+            });
             rightLayer.show();
         }
     });
 }
-function resetPwd(){   
+
+//自定义更新方法
+function DPost(myRole, myOper){
     $.ajax({
-        url: "/admin/ajax/lock",
-        type: "get",
-        data: {},
-        dataType:"text",
+        url: "/admin/" + myRole + "/ajax/" + myOper,
+        type: "post",
+        data: $("#rightSidebarForm").serialize(),
+        dataType:"json",
         success: function(data) {
-            $("#lock_sidebar .content").html(data);    
-            lockLayer.show();
+            if(data.done){
+                $("li.active a").click();
+                rightLayer.hide();
+            }else{
+                alert(data.msg);
+            }
         }
     });
-}
+};
 function unlock(){   
     $.ajax({
-        url: "/user/login",
+        url: "/admin/user/login",
         type: "post",
         data: $("#lockForm").serialize(),
         dataType:"json",
         success: function(data) {
             if(data.done){
-                lockLayer.hide();
+                lockLayer.callback();
             }else{
-                alert(data.msg);
+                var obj = $("#lockForm").find("#password");
+                obj.val("");
+                $("#lockForm").find("#password").attr("placeholder", data.msg);
             }
         }
     });

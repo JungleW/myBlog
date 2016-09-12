@@ -4,8 +4,12 @@ var mongoose = require("mongoose");
 var UserSchema = new mongoose.Schema({
       name: String,
       password: String,
-      role: Number,
-      image: String
+      image: String,
+      gender: String,
+      email: String,
+      phone: String,
+      motto: String,
+      role: Number
 });
 var UserModel = mongoose.model('user', UserSchema);
 

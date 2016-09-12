@@ -7,32 +7,36 @@ router.get('/', function(req, res, next) {
      //搜读者
     User.search({}, function(err, data) {   
         req.session.user = data[0];
-        req.session.user.role = 10;
-        req.session.user.image = "/admin/img/user3-128x128.jpg";
+        req.session.user.role = 1;
+        req.session.user.image = "/admin/img/user_jugnle.jpg";
         res.render('admin/index', {
         title: '首页',
         user: req.session.user
-    });
+        });
     });
 });
 
 /* GET test page. */
-router.get('/test', function(req, res, next) {
-    req.session.user = {
-        name: "wjz",
-        image: "/admin/img/user3-128x128.jpg",
-        role: 10
-    }
-    res.render('admin/index', {
-        title: '首页',
-        user: req.session.user
+router.get('/test/:n/:role', function(req, res, next) {
+    var n = req.params.n;
+    var role = req.params.role;
+    User.search({}, function(err, data) {   
+        req.session.user = data[n];
+        req.session.user.role = role;
+        req.session.user.image = "/admin/img/user3-128x128.jpg";
+        res.render('admin/index', {
+            title: '首页',
+            user: req.session.user
+        });
     });
 });
 /* GET test page. */
 router.get('/role/:role', function(req, res, next) {
-    var role = req.params.role;
-    user.role = role;
-    req.session.user = user;
+    req.session.user = {
+        name: "wjz",
+        image: "/admin/img/user3-128x128.jpg",
+        role: req.params.role
+    }
     res.render('admin/index', {
         title: '首页',
         user: req.session.user
@@ -63,7 +67,7 @@ router.get('/ajax/lock', function(req, res, next) {
         res.render('admin/_lock', {
             title: 'User_edit',
             index: 'user_edit',
-            User: data
+            user: data
         });
     //});
 });
