@@ -1,0 +1,121 @@
+{
+	"right":[
+		{
+			"header": "首页",
+			"list": [
+				{
+					"title": "首页",
+					"icon" : "fa-home",
+					"data_role": "index"
+				}
+			]
+		},
+		{
+			"header": "数据管理",
+			"list": [
+				{
+					"title": "博文",
+					"icon" :"fa-circle-o",
+					"list": [
+						{
+							"title": "文章",
+							"icon" :"fa-circle-o",
+							"data_role": "blog"		
+						},
+						{
+							"title": "分类",
+							"icon" :"fa-circle-o",
+							"data_role": "tag"	
+						}
+					]
+				},
+				{
+					"title": "博主",
+					"icon" :" fa-graduation-cap",
+					"data_role": "blogger"	
+				},
+				{
+					"title": "读者",
+					"icon" :"fa-user",
+					"data_role": "user"	
+				},
+				{
+					"title": "管理员",
+					"icon" : "fa-user-secret",
+					"data_role": "admin"	
+				}
+			]
+		},		
+		{
+			"header": "模块管理",
+			"list": [
+				{
+					"title": "博文",
+					"icon" : "fa-pencil-square-o",
+					"data_role": "blog"
+				},
+				{
+					"title": "照片墙",
+					"icon" : "fa-file-picture-o",
+					"data_role": "picture"
+				}
+			]
+		},
+		{
+			"header": "统计分析",
+			"list": [
+				{
+					"title": "统计",
+					"icon" : " fa-bar-chart",
+					"data_role": "statistics"
+				}
+			]
+		},
+		{
+			"header": "系统设置",
+			"list": [
+				{
+					"title": "设置",
+					"icon" : "fa-cog",
+					"data_role": "set"
+				}
+			]
+		},
+		{
+			"header": "管理中心",
+			"list": [
+				{
+					"title": "博文",
+					"icon" : "fa-pencil-square-o",
+					"data_role": "blog"
+				},
+				{
+					"title": "照片墙",
+					"icon" : "fa-file-picture-o",
+					"data_role": "picture"
+				}
+			]
+		},
+		{
+			"header": "系统设置",
+			"list": [
+				{
+					"title": "模块管理",
+					"icon" : "fa-th-large",
+					"data_role": "item"
+				}
+			]
+		},
+		{
+			"header": "个人中心",
+			"list": [
+				{
+					"title": "信息",
+					"icon" : "fa-home",
+					"data_role": "profile"
+				}
+			]
+		}
+
+	]
+}

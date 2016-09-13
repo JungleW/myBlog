@@ -21,7 +21,7 @@ $(function () {
                 }
             },
             error: function(err, data){
-                alert("访问异常");
+                lockLayer.show();
             }
         });
     });
