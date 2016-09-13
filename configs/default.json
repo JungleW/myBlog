@@ -1,0 +1,24 @@
+{
+	"right":[
+		{
+			"header": "首页",
+			"list": [
+				{
+					"title": "首页",
+					"icon" : "fa-home",
+					"data_role": "index"
+				}
+			]
+		},		
+		{
+			"header": "系统设置",
+			"list": [
+				{
+					"title": "模块管理",
+					"icon" : "fa-th-large",
+					"data_role": "item"
+				}
+			]
+		}
+	]
+}
