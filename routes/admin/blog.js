@@ -17,7 +17,8 @@ router.get('/ajax', function(req, res, next) {
         app.render('admin/_blog', {
             table:{
                 id: "table",
-                titles: [
+                title: "博文列表",
+                headers: [
                     {name: '标题', label: 'title', url: ''}, 
                     {name: '作者', label: 'author'}, 
                     {name: '阅读量', label: 'view'}, 
@@ -45,18 +46,7 @@ router.get('/ajax', function(req, res, next) {
         });
     });
 });
-/* GET table status page. */
-router.get('/ajax/tableOptions', function(req, res, next) {
-    //表格修饰
-    res.send({
-        title:"博文",
-        table:{
-            id: "table",
-            noSortArr: [4]
-        },
-        done: true
-    });
-});
+
 
 /* GET blog list page. */
 router.get('/ajax/list', function(req, res, next) {
@@ -144,7 +134,7 @@ router.post('/ajax/update', function(req, res, next) {
     //获取待处理数据
     var newBlog = {
         title: req.body.title,
-        author: "test",
+        author: req.session.user.name,
         updateTime: "2016-08-09",
         abstract: "摘要",
         content: req.body.content,

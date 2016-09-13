@@ -1,29 +1,12 @@
 var rightLayer;
 var lockLayer;
 var role;
+var skin = "skin-blue";
 $(function () {
     $(".main-block").bind("click", function() {
         $("#m_title").html($(this).find(".title").html());
         role = $(this).attr("data-role");
-        $.ajax({
-            url: "/admin/" + role + "/ajax",
-            type: "get",
-            data: {},
-            dataType:"json",
-            success: function(data) {
-                if(data.done){
-                    showBlock(data.html);
-                    if(data.table){
-                        updateTable(data.table);
-                    }
-                }else{
-
-                }
-            },
-            error: function(err, data){
-                alert("访问异常");
-            }
-        });
+        refresh();
     });
     //右导航栏的样式改变
     $(".main-link").bind("click", function() {
@@ -64,9 +47,34 @@ $(function () {
                 }
             });
     });
+    $(".skin-select [data-skin*='skin']").bind("click", function() {
+        var oldSkin = skin;
+        skin = $(this).attr("data-skin");
+        $("body").removeClass(oldSkin).addClass(skin);
+    });
 });
 
+function refresh(){
+    $.ajax({
+        url: "/admin/" + role + "/ajax",
+        type: "get",
+        data: {},
+        dataType:"json",
+        success: function(data) {
+            if(data.done){
+                showBlock(data.html);
+                if(data.table){
+                    updateTable(data.table);
+                }
+            }else{
 
+            }
+        },
+        error: function(err, data){
+            alert("访问异常");
+        }
+    });
+}
 function showBlock(data) {
     $("#m_content").html(data);
 }
@@ -178,8 +186,8 @@ function update(id, myRole){
         dataType:"json",
         success: function(data) {
             if(data.done){
-                $("li.active a").click();
                 rightLayer.hide();
+                refresh();
             }else{
                 alert(data.msg);
             }

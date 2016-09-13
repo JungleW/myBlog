@@ -5,10 +5,8 @@ var router = express.Router();
 /* GET home page. */
 router.get('/', function(req, res, next) {
      //搜读者
-    User.search({}, function(err, data) {   
+    User.search({}, function(err, data) {console.log(data);  
         req.session.user = data[0];
-        req.session.user.role = 1;
-        req.session.user.image = "/admin/img/user_jugnle.jpg";
         res.render('admin/index', {
         title: '首页',
         user: req.session.user
@@ -18,17 +16,23 @@ router.get('/', function(req, res, next) {
 
 /* GET test page. */
 router.get('/test/:n/:role', function(req, res, next) {
-    var n = req.params.n;
+    var user = {
+        _id: "123",
+        name: "wjz",
+        role: 1,
+        password: "123456",
+        nickName: "jungle",
+        image:"/admin/img/user3-128x128.jpg",
+        gender:"male"
+    }
     var role = req.params.role;
-    User.search({}, function(err, data) {   
-        req.session.user = data[n];
-        req.session.user.role = role;
-        req.session.user.image = "/admin/img/user3-128x128.jpg";
+    //User.search({}, function(err, data) {
+        req.session.user = user;
         res.render('admin/index', {
             title: '首页',
             user: req.session.user
         });
-    });
+    //});
 });
 /* GET test page. */
 router.get('/role/:role', function(req, res, next) {

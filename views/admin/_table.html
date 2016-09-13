@@ -2,7 +2,10 @@
 <div class="col-xs-12">  
 <div class="box box-info">
     <div class="box-header">
-      
+        <h3 class="box-title"><%= table.title %></h3>
+        <div class="pull-right">
+            <button type="button" class="btn btn-info btn-flat" onclick="edit()"><i class="fa fa-plus"></i></button>
+        </div>
     </div>
     <!-- /.box-header -->
     <div class="box-body">
@@ -10,10 +13,10 @@
         <thead>
         <tr>
         <%  var colNum = 0;  %>
-        <%  if(table && table.titles){ %>
-        <%  colNum = table.titles.length; %>
+        <%  if(table && table.headers){ %>
+        <%  colNum = table.headers.length; %>
         <%  for(var i=0; i<colNum; i++) {     %> 
-            <th><%= table.titles[i].name %></th>
+            <th><%= table.headers[i].name %></th>
         <%      }   %>
         <%   }  %>
         </tr>
@@ -25,14 +28,14 @@
             <tr>
                 <td>
                     <a href="javascript:show('<%= table.list[i]._id %>')">
-                        <%= table.list[i][table.titles[0].label] %>
+                        <%= table.list[i][table.headers[0].label] %>
                     </a>
                 </td>
         <%    for(var j=1; j<colNum; j++){ %>
-        <%       if(table.titles[j].label){ %>
-                    <td> <%= table.list[i][table.titles[j].label] %></td>
+        <%       if(table.headers[j].label){ %>
+                    <td> <%= table.list[i][table.headers[j].label] %></td>
         <%       } else { %>
-        <%          var opers = table.titles[j].opers;  %>
+        <%          var opers = table.headers[j].opers;  %>
                     <td>
         <%             for(var k=0; k<opers.length; k++) { %>
                        <a href="javascript: <%= opers[k].oper %>('<%= table.list[i]._id %>')" style="padding-right:15px">

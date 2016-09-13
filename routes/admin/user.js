@@ -18,7 +18,8 @@ router.get('/ajax', function(req, res, next) {
         app.render('admin/_user', {
             table:{
                 id: "table",
-                titles: [
+                title: "读者列表",
+                headers: [
                     {name: '读者', label: 'name', url: ''}, 
                     {name: '注册时间', label: 'buildTime'},
                     {name: '操作', opers: 
